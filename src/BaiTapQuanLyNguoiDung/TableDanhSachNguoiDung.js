@@ -33,7 +33,7 @@ class TableDanhSachNguoiDung extends Component {
               primary
               onClick={() => {
                 let disableCapNhat = false;
-                let disableDangKy = true;
+                let disableDangKy = false;
                 this.props.dispatch(
                   editNguoiDungAction(nguoiDung),
                   disableCapNhat,

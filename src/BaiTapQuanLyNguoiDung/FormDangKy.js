@@ -28,7 +28,7 @@ class FormDangKy extends Component {
       loaiNguoiDung: "",
     },
     disableCapNhat: true,
-    disableDangKy: false,
+    disableDangKy: true,
     isValidInput: true,
   };
 
@@ -81,13 +81,12 @@ class FormDangKy extends Component {
       errors: newErrors,
       isValidInput: valid,
     });
+    let isValid = this.state.isValidInput;
+    console.log(isValid);
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-
+  validate() {
     let { values, errors } = this.state;
-
     let valid = true;
     let profileContent = "";
     let errorContent = "";
@@ -115,6 +114,13 @@ class FormDangKy extends Component {
         valid = false;
       }
     }
+    return { valid, profileContent, errorContent };
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    let { valid, profileContent, errorContent } = this.validate();
 
     if (!valid) {
       Swal.fire({
@@ -123,6 +129,7 @@ class FormDangKy extends Component {
         icon: "error",
         confirmButtonText: "OK",
       });
+
       return;
     }
 
@@ -148,6 +155,7 @@ class FormDangKy extends Component {
   render() {
     return (
       <form
+        id="formDangKy"
         onSubmit={this.handleSubmit}
         style={{
           width: "90%",
@@ -239,8 +247,8 @@ class FormDangKy extends Component {
           </div>
         </div>
 
-        {!this.state.disableCapNhat ? (
-          <Button className=" ml-1" success>
+        {!this.state.disableDangKy ? (
+          <Button className=" ml-1" disabled success>
             Đăng ký
           </Button>
         ) : (
@@ -248,6 +256,8 @@ class FormDangKy extends Component {
             className=" ml-1"
             success
             onClick={() => {
+              let { valid } = this.validate();
+
               let {
                 taiKhoan,
                 hoTen,
@@ -256,8 +266,8 @@ class FormDangKy extends Component {
                 soDienThoai,
                 loaiNguoiDung,
               } = this.state.values;
-              let isValid = this.state.isValidInput;
-              if (!isValid) {
+
+              if (valid) {
                 let newNguoiDung = {
                   id: Date.now(),
                   taiKhoan: taiKhoan,
@@ -276,7 +286,7 @@ class FormDangKy extends Component {
           </Button>
         )}
         {this.state.disableCapNhat ? (
-          <Button disabled primary className="ml-2">
+          <Button disabled primary className="ml-1">
             Cập nhật
           </Button>
         ) : (
@@ -284,6 +294,7 @@ class FormDangKy extends Component {
             className="ml-1"
             primary
             onClick={() => {
+              let { valid } = this.validate();
               let {
                 taiKhoan,
                 hoTen,
@@ -292,17 +303,18 @@ class FormDangKy extends Component {
                 soDienThoai,
                 loaiNguoiDung,
               } = this.state.values;
-
-              this.props.dispatch(
-                updateNguoiDungAction(
-                  taiKhoan,
-                  hoTen,
-                  matKhau,
-                  Email,
-                  soDienThoai,
-                  loaiNguoiDung
-                )
-              );
+              if (valid) {
+                this.props.dispatch(
+                  updateNguoiDungAction(
+                    taiKhoan,
+                    hoTen,
+                    matKhau,
+                    Email,
+                    soDienThoai,
+                    loaiNguoiDung
+                  )
+                );
+              }
             }}
           >
             Cập nhật
